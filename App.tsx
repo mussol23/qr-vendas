@@ -30,6 +30,7 @@ import StockEntriesHistoryPage from './pages/StockEntriesHistoryPage';
 import StockExitsHistoryPage from './pages/StockExitsHistoryPage';
 import SuccessPage from './pages/SuccessPage';
 import EmployeesPage from './pages/EmployeesPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function AppRoutes() {
     const { user, signOut, loading: authLoading } = useAuth();
@@ -79,6 +80,7 @@ function AppRoutes() {
                         <Route path="/register" element={<RegistrationPage />} />
                         <Route path="/success" element={<SuccessPage />} />
                         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password" element={<ResetPasswordPage />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </>
                 )}
