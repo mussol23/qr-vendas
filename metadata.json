@@ -1,0 +1,7 @@
+{
+  "name": "QR Sales Manager",
+  "description": "A hybrid mobile app for small stores to manage stock, sales, and QR code labels. It supports offline functionality and cloud synchronization.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

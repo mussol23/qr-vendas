@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpar Dados Locais - QR Vendas</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        button {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #dc2626;
+        }
+        .success {
+            background: #10b981;
+        }
+        .success:hover {
+            background: #059669;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🧹 Limpar Dados Locais</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Atenção:</strong> Esta ação irá remover TODOS os dados locais do navegador, incluindo produtos, clientes e vendas que não foram sincronizados com o servidor.
+        </div>
+
+        <div class="info">
+            <strong>ℹ️ Por que fazer isso?</strong><br>
+            Se você está vendo erros de UUID inválido (como <code>"prod_..."</code>), significa que há dados antigos com IDs incorretos no localStorage. Esta ferramenta remove esses dados para que o app funcione corretamente.
+        </div>
+
+        <h3>O que será removido:</h3>
+        <ul>
+            <li>Produtos locais (<code>products_backup</code>)</li>
+            <li>Clientes locais (<code>clients_backup</code>)</li>
+            <li>Vendas locais (<code>sales_backup</code>)</li>
+            <li>Transações locais (<code>transactions_backup</code>)</li>
+            <li>Cache do Service Worker</li>
+        </ul>
+
+        <button onclick="clearAllData()">🗑️ Limpar Todos os Dados</button>
+        <button class="success" onclick="clearAndReload()">🔄 Limpar e Recarregar App</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showResult(message, isSuccess) {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            result.style.background = isSuccess ? '#d1fae5' : '#fee2e2';
+            result.style.color = isSuccess ? '#065f46' : '#991b1b';
+            result.textContent = message;
+        }
+
+        function clearAllData() {
+            try {
+                // Listar itens antes de limpar
+                const items = Object.keys(localStorage);
+                console.log('Itens no localStorage antes:', items);
+
+                // Limpar backups locais
+                localStorage.removeItem('products_backup');
+                localStorage.removeItem('clients_backup');
+                localStorage.removeItem('sales_backup');
+                localStorage.removeItem('transactions_backup');
+
+                // Limpar Service Worker caches
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+
+                showResult('✅ Dados locais removidos com sucesso! Você pode fechar esta aba.', true);
+                console.log('✅ localStorage limpo!');
+            } catch (e) {
+                showResult('❌ Erro ao limpar dados: ' + e.message, false);
+                console.error('Erro:', e);
+            }
+        }
+
+        function clearAndReload() {
+            clearAllData();
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
+
