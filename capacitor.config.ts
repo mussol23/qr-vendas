@@ -14,7 +14,10 @@ const config: CapacitorConfig = {
 			iosIsEncryption: false,
 			androidIsEncryption: false,
 		},
-		// ML Kit plugin does not require specific config here
+		// Configuração para deep links OAuth
+		App: {
+			appUrlScheme: 'com.qr.vendas',
+		},
 	},
 };
 

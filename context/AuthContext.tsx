@@ -9,6 +9,7 @@ type AuthContextType = {
 	user: User | null;
 	session: Session | null;
 	signInWithPassword: (params: { email?: string; phone?: string; password: string }) => Promise<{ error?: string }>;
+	signInWithGoogle: () => Promise<{ error?: string }>;
 	signOut: () => Promise<void>;
 	loading: boolean;
 };
@@ -136,6 +137,22 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 		return { error: errorText };
 	};
 
+	const signInWithGoogle: AuthContextType['signInWithGoogle'] = async () => {
+		// Detecta se está rodando no Capacitor (mobile)
+		const isCapacitor = !!(window as any).Capacitor;
+
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: {
+				// Se for mobile, usa deep link; se for web, usa URL normal
+				redirectTo: isCapacitor
+					? 'com.qr.vendas://auth/callback'
+					: `${window.location.origin}/pos`,
+			},
+		});
+		return { error: error?.message };
+	};
+
 	const signOut = async () => {
 		const userId = user?.id; // Captura o ID antes de deslogar
 
@@ -176,7 +193,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 	};
 
 	const value = useMemo<AuthContextType>(
-		() => ({ user, session, signInWithPassword, signOut, loading }),
+		() => ({ user, session, signInWithPassword, signInWithGoogle, signOut, loading }),
 		[user, session, loading]
 	);
 
